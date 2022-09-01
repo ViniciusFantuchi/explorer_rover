@@ -28,8 +28,8 @@ class App(customtkinter.CTk):
 
         #============ Set Frames =============
         self.grid_columnconfigure(0, minsize=400)
-        self.grid_columnconfigure(1, weight=4)
-        self.grid_columnconfigure(2, weight=4)
+        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
 
         #self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
@@ -276,6 +276,90 @@ class App(customtkinter.CTk):
         self.right_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND")
         self.right_btn.grid(row=5, column=4, padx=8, pady=10, sticky="nswe")
 
+
+
+
+        #============== Frame Gripper ================
+        self.frame_gripper.grid_columnconfigure(1, minsize=10) 
+
+        self.frame_gripper.grid_rowconfigure(1, minsize=10) # spacing row
+        #self.frame_control.grid_rowconfigure(6, minsize=20) # spacing row
+
+        self.gripper_title = customtkinter.CTkLabel(self.frame_gripper, 
+                                                text="GRIPPER CONTROL",
+                                                text_font=("Roboto Bold", -16),
+                                                anchor="w")
+        self.gripper_title.grid(row=0, column=0, columnspan=3, padx=16, pady=16, sticky="sw")
+
+        # Gripper control
+        self.status1_txt = customtkinter.CTkLabel(self.frame_gripper, 
+                                                text="Claw Control: ",
+                                                text_font=("Roboto medium", -16),
+                                                anchor="w")
+        self.status1_txt.grid(row=2, column=0, padx=20, sticky="w")
+
+        self.status1_txt = customtkinter.CTkLabel(self.frame_gripper, 
+                                                text="OPEN",
+                                                width=50,
+                                                text_font=("Roboto medium", -16),
+                                                anchor="e")
+        self.status1_txt.grid(row=2, column=2, padx=8, pady=10, sticky="e")
+
+        self.arm_switch = customtkinter.CTkSwitch(master=self.frame_gripper, 
+                                                    text="  CLOSE",
+                                                    text_font=("Roboto medium", -16))
+        self.arm_switch.grid(row=2, column=3, padx=8, pady=10, sticky="w")
+
+        # Arm control
+        self.status2_txt = customtkinter.CTkLabel(self.frame_gripper, 
+                                                text="Arm Control: ",
+                                                text_font=("Roboto medium", -16),
+                                                anchor="w")
+        self.status2_txt.grid(row=3, column=0, padx=20, pady=10, sticky="snw")
+
+        self.status1_txt = customtkinter.CTkLabel(self.frame_gripper, 
+                                                text="UP",
+                                                width=50,
+                                                text_font=("Roboto medium", -16),
+                                                anchor="e")
+        self.status1_txt.grid(row=3, column=2, padx=8, pady=10, sticky="e")
+
+        self.arm_switch = customtkinter.CTkSwitch(master=self.frame_gripper, 
+                                                    text="  DOWN",
+                                                    text_font=("Roboto medium", -16))
+        self.arm_switch.grid(row=3, column=3, padx=8, pady=10, sticky="w")
+
+
+        #============== Frame Sensors ================
+        #self.frame_sensor.grid_columnconfigure(0, minsize=50) 
+
+        self.frame_sensor.grid_rowconfigure(1, minsize=20) # spacing row
+        #self.frame_control.grid_rowconfigure(6, minsize=20) # spacing row
+
+        self.sensor_title = customtkinter.CTkLabel(self.frame_sensor, 
+                                                text="SENSORS",
+                                                text_font=("Roboto Bold", -16),
+                                                anchor="w")
+        self.sensor_title.grid(row=0, column=0, padx=16, pady=16, sticky="w")
+
+
+        self.progressbar_txt = customtkinter.CTkLabel(self.frame_sensor, 
+                                                text="Distance: ",
+                                                text_font=("Roboto Bold", -16),
+                                                anchor="w")
+        self.progressbar_txt.grid(row=2, column=0, padx=20, sticky="snw")
+
+        self.progressbar_value = customtkinter.CTkLabel(self.frame_sensor, 
+                                                text="00 cm",
+                                                text_font=("Roboto medium", -16),
+                                                width=80,
+                                                anchor="e")
+        self.progressbar_value.grid(row=2, column=1, columnspan=3, padx=16, sticky="sne")
+
+        self.progressbar = customtkinter.CTkProgressBar(master=self.frame_sensor,
+                                                        width=380)
+        self.progressbar.grid(row=3, column=0, columnspan=4, padx=20, pady=16, sticky="snwe")
+        
 
 
 
