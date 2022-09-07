@@ -25,12 +25,17 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
+        # Define control variables
+        self.cont = tkinter.IntVar()
+        self.cont.set(0)
+        self.content = tkinter.StringVar()
         self.forward_value = tkinter.DoubleVar()
         self.forward_value.set(0.0)
         self.backward_value = tkinter.DoubleVar()
         self.left_value = tkinter.DoubleVar()
         self.right_value = tkinter.DoubleVar()
 
+        # Set window
         self.title("Explorer Rover - Mission Control")
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
         #self.protocol("WM_DELETE_WINDOW", self.on_closing())  # call .on_closing() when app gets closed
@@ -59,8 +64,8 @@ class App(customtkinter.CTk):
         self.frame_sensor = customtkinter.CTkFrame(master=self)
         self.frame_sensor.grid(row=1, column=1, padx=8, pady=(0, 8), sticky="nswe")
 
-        self.frame_gripper = customtkinter.CTkFrame(master=self)
-        self.frame_gripper.grid(row=1, column=2, padx=(8, 20), pady=(0, 8), sticky="nswe")
+        self.frame_send = customtkinter.CTkFrame(master=self)
+        self.frame_send.grid(row=1, column=2, padx=(8, 20), pady=(0, 8), sticky="nswe")
 
         #self.frame_hist = customtkinter.CTkFrame(master=self)
         #self.frame_hist.grid(row=1, column=3, columnspan=2, sticky="nswe")
@@ -255,26 +260,34 @@ class App(customtkinter.CTk):
         self.color_sensor_label.grid(row=5, column=1, padx=20, sticky="snwe")
 
 
-        #============== Frame Gripper ================
-        self.frame_gripper.grid_columnconfigure(1, minsize=10) 
+        #============== Send data logger ================
+        self.frame_send.grid_columnconfigure(0, weight=1) 
 
-        self.frame_gripper.grid_rowconfigure(1, minsize=10) # spacing row
-        #self.frame_control.grid_rowconfigure(6, minsize=20) # spacing row
+        #self.frame_send.grid_rowconfigure(1, minsize=10) # spacing row
+        #self.frame_control.grid_rowconfigure(6, maxsize=160) # spacing row
 
-        self.gripper_title = customtkinter.CTkLabel(self.frame_gripper, 
+        self.gripper_title = customtkinter.CTkLabel(self.frame_send, 
                                                 text="SEND DATA LOGGER",
                                                 text_font=("Roboto Bold", -16),
                                                 anchor="w")
-        self.gripper_title.grid(row=0, column=0, columnspan=3, padx=16, pady=16, sticky="sw")
+        self.gripper_title.grid(row=0, column=0, padx=16, pady=16, sticky="sw")
 
-       
-
+        
+        self.canva = customtkinter.CTkCanvas(self.frame_send,
+                                                height=160)
+        self.canva.create_text(40, 20, 
+                                text="Number\t|        last command\t|        value", 
+                                anchor="w")
+        self.canva.create_line(30, 34, 330, 34)
+        self.command_logger = self.canva.create_text(40, 40, text="", anchor="nw")
+        self.canva.grid(row=1, column=0, padx=16, pady=(0,16), sticky="nwe")
+        
 
 
         #============== Frame Control ================
         self.frame_control.grid_columnconfigure(0, minsize=50) 
         self.frame_control.grid_columnconfigure(1, minsize=50)
-        self.frame_control.grid_columnconfigure(2, minsize=300)
+        self.frame_control.grid_columnconfigure(2, minsize=350)
 
         self.frame_control.grid_rowconfigure(1, minsize=5) # spacing row
         self.frame_control.grid_rowconfigure(6, minsize=20) # spacing row
@@ -288,13 +301,14 @@ class App(customtkinter.CTk):
         # Forward control
         self.forward_txt = customtkinter.CTkLabel(self.frame_control, 
                                                 text="FORWARD",
+                                                width=100,
                                                 text_font=("Roboto medium", -16),
                                                 anchor="w")
         self.forward_txt.grid(row=2, column=1, padx=8, pady=10, sticky="snw")
 
         self.forward_slider = customtkinter.CTkSlider(master=self.frame_control,
-                                                from_=0,
-                                                to=2,
+                                                from_=0.0,
+                                                to=2.0,
                                                 number_of_steps=200,
                                                 variable=self.forward_value)
         self.forward_slider.grid(row=2, column=2, padx=8, pady=10, sticky="we")
@@ -305,12 +319,16 @@ class App(customtkinter.CTk):
                                                     textvariable=self.forward_value)
         self.forward_entry.grid(row=2, column=3, padx=8, pady=10, sticky="nswe")
 
-        self.forward_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND", height=30)
+        self.forward_btn = customtkinter.CTkButton(master=self.frame_control, 
+                                                    text="SEND", 
+                                                    height=30,
+                                                    command= lambda : self.sendCommand('f'))
         self.forward_btn.grid(row=2, column=4, padx=8, pady=10, sticky="nswe")
 
         # Backward control
         self.backward_txt = customtkinter.CTkLabel(self.frame_control, 
                                                 text="BACKWARD",
+                                                width=100,
                                                 text_font=("Roboto medium", -16),
                                                 anchor="w")
         self.backward_txt.grid(row=3, column=1, padx=8, pady=10, sticky="snw")
@@ -328,12 +346,16 @@ class App(customtkinter.CTk):
                                                     textvariable=self.backward_value)
         self.backward_entry.grid(row=3, column=3, padx=8, pady=10, sticky="nswe")
 
-        self.backward_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND", height=30)
+        self.backward_btn = customtkinter.CTkButton(master=self.frame_control, 
+                                                    text="SEND", 
+                                                    height=30,
+                                                    command= lambda : self.sendCommand('b'))
         self.backward_btn.grid(row=3, column=4, padx=8, pady=10, sticky="nswe")
 
         # Left control
         self.left_txt = customtkinter.CTkLabel(self.frame_control, 
                                                 text="TURN LEFT",
+                                                width=100,
                                                 text_font=("Roboto medium", -16),
                                                 anchor="w")
         self.left_txt.grid(row=4, column=1, padx=8, pady=10, sticky="snw")
@@ -351,12 +373,16 @@ class App(customtkinter.CTk):
                                                 textvariable=self.left_value)
         self.left_entry.grid(row=4, column=3, padx=8, pady=10, sticky="nswe")
 
-        self.left_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND", height=30)
+        self.left_btn = customtkinter.CTkButton(master=self.frame_control, 
+                                                text="SEND", 
+                                                height=30,
+                                                command= lambda : self.sendCommand('l'))
         self.left_btn.grid(row=4, column=4, padx=8, pady=10, sticky="nswe")
 
         # Right control
         self.right_txt = customtkinter.CTkLabel(self.frame_control, 
                                                 text="TURN LEFT",
+                                                width=100,
                                                 text_font=("Roboto medium", -16),
                                                 anchor="w")
         self.right_txt.grid(row=5, column=1, padx=8, pady=10, sticky="snw")
@@ -374,7 +400,10 @@ class App(customtkinter.CTk):
                                                 textvariable=self.right_value)
         self.right_entry.grid(row=5, column=3, padx=8, pady=10, sticky="nswe")
 
-        self.right_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND", height=30)
+        self.right_btn = customtkinter.CTkButton(master=self.frame_control, 
+                                                text="SEND", 
+                                                height=30,
+                                                command= lambda : self.sendCommand('r'))
         self.right_btn.grid(row=5, column=4, padx=8, pady=10, sticky="nswe")
 
 
@@ -399,10 +428,11 @@ class App(customtkinter.CTk):
                                                 anchor="e")
         self.status1_txt.grid(row=0, column=2, padx=8, pady=10, sticky="e")
 
-        self.arm_switch = customtkinter.CTkSwitch(master=self.container, 
+        self.claw_switch = customtkinter.CTkSwitch(master=self.container, 
                                                     text="  CLOSE",
-                                                    text_font=("Roboto medium", -16))
-        self.arm_switch.grid(row=0, column=3, padx=8, pady=10, sticky="w")
+                                                    text_font=("Roboto medium", -16),
+                                                    command= lambda : self.switchStatus(self.claw_switch, "claw"))
+        self.claw_switch.grid(row=0, column=3, padx=8, pady=10, sticky="w")
 
         
 
@@ -415,13 +445,13 @@ class App(customtkinter.CTk):
 
         self.arm_switch = customtkinter.CTkSwitch(master=self.container, 
                                                     text="  DOWN",
-                                                    text_font=("Roboto medium", -16))
+                                                    text_font=("Roboto medium", -16),
+                                                    command= lambda : self.switchStatus(self.arm_switch, "arm"))
         self.arm_switch.grid(row=0, column=6, padx=8, pady=10, sticky="w")
 
         
 
-
-    # Metods
+    #============== METODS ================#
 
     def progressbar_callback(self, switch, value):
         App.mission_progress
@@ -436,12 +466,45 @@ class App(customtkinter.CTk):
         self.progressbar_value.configure(text=f'{round(App.mission_progress*100)}%')
         #print(App.mission_progress)
     
-    
+    def switchStatus(self, value, id):
+        val = value.get()
+        if id == "claw":
+            self.sendCommand('o') if val else self.sendCommand('c')
+        if id == "arm":
+            self.sendCommand('u') if val else self.sendCommand('d')
+        print(val)
+
+
+    def sendLogger(self, command, value):
+        self.cont.set(self.cont.get() + 1)
+        txt_format = f'    {self.cont.get()}\t|            {command}\t|         {value}\n{self.content.get()}'
+        self.content.set(txt_format)
+        self.canva.itemconfig(self.command_logger, text=self.content.get())
         
+    def sendCommand(self, command):
+        if command == 'f':
+            self.sendLogger("Forward", f'{self.forward_value.get():.2f}')
+        if command == 'b':
+            self.sendLogger("Backward", f'{self.backward_value.get():.2f}')
+        if command == 'l':
+            self.sendLogger("Turn Left", f'{self.left_value.get():.2f}')
+        if command == 'r':
+            self.sendLogger("Turn Right", f'{self.right_value.get():.2f}')
+        if command == 'o':
+            self.sendLogger("Claw control", "open")
+        if command == 'c':
+            self.sendLogger("Claw control", "close")
+        if command == 'u':
+            self.sendLogger("Arm control", "up")
+        if command == 'd':
+            self.sendLogger("Arm control", "Down")
+
 
     def on_closing(self, event=0):
         self.destroy()
 
+
+        
 if __name__ == "__main__":
     app = App()
     app.mainloop()
