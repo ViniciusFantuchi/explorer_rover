@@ -19,9 +19,18 @@ class App(customtkinter.CTk):
     HEIGHT = 720
 
     mission_progress = 0
+    
+    
 
     def __init__(self):
         super().__init__()
+
+        self.forward_value = tkinter.DoubleVar()
+        self.forward_value.set(0.0)
+        self.backward_value = tkinter.DoubleVar()
+        self.left_value = tkinter.DoubleVar()
+        self.right_value = tkinter.DoubleVar()
+
         self.title("Explorer Rover - Mission Control")
         self.geometry(f"{App.WIDTH}x{App.HEIGHT}")
         #self.protocol("WM_DELETE_WINDOW", self.on_closing())  # call .on_closing() when app gets closed
@@ -99,6 +108,7 @@ class App(customtkinter.CTk):
 
         self.progressbar = customtkinter.CTkProgressBar(master=self.frame_objetives,)
         self.progressbar.grid(row=3, column=0, columnspan=4, sticky="snwe", padx=16, pady=16)
+        self.progressbar.set(0)
 
         # Mission Objetives
         self.obj_txt = customtkinter.CTkLabel(self.frame_objetives, 
@@ -109,76 +119,88 @@ class App(customtkinter.CTk):
         # Item 1
         self.item1_txt = customtkinter.CTkLabel(self.frame_objetives, 
                                                 text="1. Free access to Habitat",
-                                                text_font=("Roboto regular", -16),
+                                                text_font=("Roboto regular", -14),
                                                 anchor="w")
         self.item1_txt.grid(row=7, column=0, padx=16, pady=10, sticky="snw")
 
-        self.item1_check = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item1_check = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item1_check, 0.2))
         self.item1_check.grid(row=7, column=1,  sticky="sne")
 
         # Item 2
         self.item2_txt = customtkinter.CTkLabel(self.frame_objetives, 
                                                 text="2. Find and Collect Water",
-                                                text_font=("Roboto regular", -16),
+                                                text_font=("Roboto regular", -14),
                                                 anchor="w")
         self.item2_txt.grid(row=8, column=0, padx=16, pady=10, sticky="snw")
 
-        self.item2_check1 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item2_check1 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item2_check1, 0.05))
         self.item2_check1.grid(row=8, column=1,  sticky="sne")
-        self.item2_check2 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item2_check2 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item2_check2, 0.05))
         self.item2_check2.grid(row=8, column=2, pady=10, sticky="sne")
-        self.item2_check3 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item2_check3 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item2_check3, 0.05))
         self.item2_check3.grid(row=8, column=3, pady=10, sticky="sne")
 
         # Item 3
         self.item3_txt = customtkinter.CTkLabel(self.frame_objetives, 
                                                 text="3. Collect Food",
-                                                text_font=("Roboto regular", -16),
+                                                text_font=("Roboto regular", -14),
                                                 anchor="w")
         self.item3_txt.grid(row=9, column=0, padx=16, pady=10, sticky="snw")
 
-        self.item3_check1 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item3_check1 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item3_check1, 0.05))
         self.item3_check1.grid(row=9, column=1,  sticky="sne")
-        self.item3_check2 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item3_check2 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item3_check2, 0.05))
         self.item3_check2.grid(row=9, column=2, pady=10, sticky="sne")
-        self.item3_check3 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item3_check3 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item3_check3, 0.05))
         self.item3_check3.grid(row=9, column=3, pady=10, sticky="sne")
 
 
         # Item 4
         self.item4_txt = customtkinter.CTkLabel(self.frame_objetives, 
                                                 text="4. Collect soil samples",
-                                                text_font=("Roboto regular", -16),
+                                                text_font=("Roboto regular", -14),
                                                 anchor="w")
         self.item4_txt.grid(row=10, column=0, padx=16, pady=10, sticky="snw")
 
-        self.item4_check1 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item4_check1 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item4_check1, 0.05))
         self.item4_check1.grid(row=10, column=1,  sticky="sne")
-        self.item4_check2 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item4_check2 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item4_check2, 0.05))
         self.item4_check2.grid(row=10, column=2, pady=10, sticky="sne")
-        self.item4_check3 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item4_check3 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item4_check3, 0.05))
         self.item4_check3.grid(row=10, column=3, pady=10, sticky="sne")
 
 
         # Item 5
         self.item5_txt = customtkinter.CTkLabel(self.frame_objetives, 
                                                 text="5. Share fuel with other team",
-                                                text_font=("Roboto regular", -16),
+                                                text_font=("Roboto regular", -14),
                                                 anchor="w")
         self.item5_txt.grid(row=11, column=0, padx=16, pady=10, sticky="snw")
 
-        self.item5_check1 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
+        self.item5_check1 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item5_check1, 0.20))
         self.item5_check1.grid(row=11, column=1, pady=10, sticky="sne")
 
         # Item 6
         self.item6_txt = customtkinter.CTkLabel(self.frame_objetives, 
                                                 text="6. Fuel the Launch Vehicle",
-                                                text_font=("Roboto regular", -16),
+                                                text_font=("Roboto regular", -14),
                                                 anchor="w")
-        self.item6_txt.grid(row=11, column=0, padx=16, pady=10, sticky="snw")
+        self.item6_txt.grid(row=12, column=0, padx=16, pady=10, sticky="snw")
 
-        self.item6_check1 = customtkinter.CTkCheckBox(self.frame_objetives, text="")
-        self.item6_check1.grid(row=11, column=1, pady=10, sticky="sne")
+        self.item6_check1 = customtkinter.CTkCheckBox(self.frame_objetives, text="",
+                                                        command= lambda : self.progressbar_callback(self.item6_check1, 0.15))
+        self.item6_check1.grid(row=12, column=1, pady=10, sticky="sne")
         
     
 
@@ -205,15 +227,18 @@ class App(customtkinter.CTk):
 
         self.forward_slider = customtkinter.CTkSlider(master=self.frame_control,
                                                 from_=0,
-                                                to=1,
-                                                number_of_steps=3,
-                                                command=self.progressbar.set)
+                                                to=2,
+                                                number_of_steps=200,
+                                                variable=self.forward_value)
         self.forward_slider.grid(row=2, column=2, padx=8, pady=10, sticky="we")
+        self.forward_slider.set(0)
 
-        self.forward_entry = customtkinter.CTkEntry(master=self.frame_control, text="")
+        self.forward_entry = customtkinter.CTkEntry(master=self.frame_control, 
+                                                    height=30,
+                                                    textvariable=self.forward_value)
         self.forward_entry.grid(row=2, column=3, padx=8, pady=10, sticky="nswe")
 
-        self.forward_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND")
+        self.forward_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND", height=30)
         self.forward_btn.grid(row=2, column=4, padx=8, pady=10, sticky="nswe")
 
         # Backward control
@@ -225,15 +250,18 @@ class App(customtkinter.CTk):
         
         self.backward_slider = customtkinter.CTkSlider(master=self.frame_control,
                                                 from_=0,
-                                                to=1,
-                                                number_of_steps=3,
-                                                command=self.progressbar.set)
+                                                to=2,
+                                                number_of_steps=200,
+                                                variable=self.backward_value)
         self.backward_slider.grid(row=3, column=2, padx=8, pady=10, sticky="we")
+        self.backward_slider.set(0)
 
-        self.backward_entry = customtkinter.CTkEntry(master=self.frame_control, text="")
+        self.backward_entry = customtkinter.CTkEntry(master=self.frame_control,  
+                                                    height=30,
+                                                    textvariable=self.backward_value)
         self.backward_entry.grid(row=3, column=3, padx=8, pady=10, sticky="nswe")
 
-        self.backward_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND")
+        self.backward_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND", height=30)
         self.backward_btn.grid(row=3, column=4, padx=8, pady=10, sticky="nswe")
 
         # Left control
@@ -243,17 +271,20 @@ class App(customtkinter.CTk):
                                                 anchor="w")
         self.left_txt.grid(row=4, column=1, padx=8, pady=10, sticky="snw")
         
-        self.Right_slider = customtkinter.CTkSlider(master=self.frame_control,
+        self.left_slider = customtkinter.CTkSlider(master=self.frame_control,
                                                 from_=0,
-                                                to=1,
-                                                number_of_steps=3,
-                                                command=self.progressbar.set)
-        self.Right_slider.grid(row=4, column=2, padx=8, pady=10, sticky="we")
+                                                to=2,
+                                                number_of_steps=200,
+                                                variable=self.left_value)
+        self.left_slider.grid(row=4, column=2, padx=8, pady=10, sticky="we")
+        self.left_slider.set(0)
 
-        self.left_entry = customtkinter.CTkEntry(master=self.frame_control, text="")
+        self.left_entry = customtkinter.CTkEntry(master=self.frame_control,
+                                                height=30,
+                                                textvariable=self.left_value)
         self.left_entry.grid(row=4, column=3, padx=8, pady=10, sticky="nswe")
 
-        self.left_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND")
+        self.left_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND", height=30)
         self.left_btn.grid(row=4, column=4, padx=8, pady=10, sticky="nswe")
 
         # Right control
@@ -265,15 +296,18 @@ class App(customtkinter.CTk):
         
         self.right_slider = customtkinter.CTkSlider(master=self.frame_control,
                                                 from_=0,
-                                                to=1,
-                                                number_of_steps=3,
-                                                command=self.progressbar.set)
+                                                to=2,
+                                                number_of_steps=200,
+                                                variable=self.right_value)
         self.right_slider.grid(row=5, column=2, padx=8, pady=10, sticky="we")
+        self.right_slider.set(0)
 
-        self.right_entry = customtkinter.CTkEntry(master=self.frame_control, text="")
+        self.right_entry = customtkinter.CTkEntry(master=self.frame_control,
+                                                height=30,
+                                                textvariable=self.right_value)
         self.right_entry.grid(row=5, column=3, padx=8, pady=10, sticky="nswe")
 
-        self.right_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND")
+        self.right_btn = customtkinter.CTkButton(master=self.frame_control, text="SEND", height=30)
         self.right_btn.grid(row=5, column=4, padx=8, pady=10, sticky="nswe")
 
 
@@ -334,6 +368,7 @@ class App(customtkinter.CTk):
         #self.frame_sensor.grid_columnconfigure(0, minsize=50) 
 
         self.frame_sensor.grid_rowconfigure(1, minsize=20) # spacing row
+        self.frame_sensor.grid_rowconfigure(4, minsize=20) # spacing row
         #self.frame_control.grid_rowconfigure(6, minsize=20) # spacing row
 
         self.sensor_title = customtkinter.CTkLabel(self.frame_sensor, 
@@ -342,28 +377,44 @@ class App(customtkinter.CTk):
                                                 anchor="w")
         self.sensor_title.grid(row=0, column=0, padx=16, pady=16, sticky="w")
 
-
-        self.progressbar_txt = customtkinter.CTkLabel(self.frame_sensor, 
+        # Distance
+        self.distancebar_txt = customtkinter.CTkLabel(self.frame_sensor, 
                                                 text="Distance: ",
                                                 text_font=("Roboto Bold", -16),
                                                 anchor="w")
-        self.progressbar_txt.grid(row=2, column=0, padx=20, sticky="snw")
+        self.distancebar_txt.grid(row=2, column=0, padx=20, sticky="snw")
 
-        self.progressbar_value = customtkinter.CTkLabel(self.frame_sensor, 
+        self.distancebar_value = customtkinter.CTkLabel(self.frame_sensor, 
                                                 text="00 cm",
                                                 text_font=("Roboto medium", -16),
                                                 width=80,
                                                 anchor="e")
-        self.progressbar_value.grid(row=2, column=1, columnspan=3, padx=16, sticky="sne")
+        self.distancebar_value.grid(row=2, column=1, columnspan=3, padx=16, sticky="sne")
 
-        self.progressbar = customtkinter.CTkProgressBar(master=self.frame_sensor,
+        self.distancebar = customtkinter.CTkProgressBar(master=self.frame_sensor,
                                                         width=380)
-        self.progressbar.grid(row=3, column=0, columnspan=4, padx=20, pady=16, sticky="snwe")
-        
+        self.distancebar.grid(row=3, column=0, columnspan=4, padx=20, pady=16, sticky="snwe")
 
 
+        # Color
+        self.color_sensor_txt = customtkinter.CTkLabel(self.frame_sensor, 
+                                                text="Color Sensor: ",
+                                                text_font=("Roboto Bold", -16),
+                                                anchor="w")
+        self.color_sensor_txt.grid(row=5, column=0, padx=20, sticky="nw")
 
-    def progressbar_callback(switch, value):
+        self.color_sensor_label = customtkinter.CTkLabel(self.frame_sensor, 
+                                                text="",
+                                                anchor="w",
+                                                height=40,
+                                                fg_color="red",
+                                                corner_radius=10)
+        self.color_sensor_label.grid(row=5, column=1, padx=20, sticky="snwe")
+
+
+    # Metods
+
+    def progressbar_callback(self, switch, value):
         App.mission_progress
 
         val = switch.get()
@@ -371,9 +422,13 @@ class App(customtkinter.CTk):
             App.mission_progress += value
         else:
             App.mission_progress -= value
-        print(App.mission_progress)
+
+        self.progressbar.set(App.mission_progress)
+        self.progressbar_value.configure(text=f'{round(App.mission_progress*100)}%')
+        #print(App.mission_progress)
     
-   
+    
+        
 
     def on_closing(self, event=0):
         self.destroy()
