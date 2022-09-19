@@ -1,5 +1,4 @@
-from explorer_rover.rover import Explorer
-import rover
+from src.rover import Explorer
 import tkinter
 import tkinter.messagebox
 import customtkinter
@@ -23,7 +22,9 @@ class App(customtkinter.CTk):
 
     def __init__(self, robot):
         super().__init__()
+        
         self.robot = robot
+
         # Define control variables
         self.cont = tkinter.IntVar()
         self.cont.set(0)
@@ -33,6 +34,9 @@ class App(customtkinter.CTk):
         self.backward_value = tkinter.DoubleVar()
         self.left_value = tkinter.DoubleVar()
         self.right_value = tkinter.DoubleVar()
+
+        self.powerForward = 0.6
+        self.powerTurn = 1
 
         # Set window
         self.title("Explorer Rover - Mission Control")
@@ -434,13 +438,13 @@ class App(customtkinter.CTk):
         self.claw_switch.grid(row=0, column=3, padx=8, pady=10, sticky="w")
 
         
-
         self.status1_txt = customtkinter.CTkLabel(self.container, 
                                                 text="UP",
                                                 width=50,
                                                 text_font=("Roboto medium", -16),
                                                 anchor="e")
         self.status1_txt.grid(row=0, column=5, padx=8, pady=10, sticky="e")
+
 
         self.arm_switch = customtkinter.CTkSwitch(master=self.container, 
                                                     text="  DOWN",
@@ -482,21 +486,42 @@ class App(customtkinter.CTk):
         
     def sendCommand(self, command):
         if command == 'f':
-            self.sendLogger("Forward", f'{self.forward_value.get():.2f}')
+            f = self.forward_value.get()
+            self.sendLogger("Forward", f'{f:.2f}')
+            self.robot.moveForward(self.powerForward, f)
         if command == 'b':
-            self.sendLogger("Backward", f'{self.backward_value.get():.2f}')
+            b = self.backward_value.get()
+            self.sendLogger("Backward", f'{b:.2f}')
+            self.robot.backward(self.powerForward, b)
         if command == 'l':
-            self.sendLogger("Turn Left", f'{self.left_value.get():.2f}')
+            l = self.left_value.get()
+            self.sendLogger("Turn Left", f'{l:.2f}')
+            self.robot.left(self.powerTurn, l)
         if command == 'r':
-            self.sendLogger("Turn Right", f'{self.right_value.get():.2f}')
+            r = self.right_value.get()
+            self.sendLogger("Turn Right", f'{r:.2f}')
+            self.robot.right(self.powerTurn, r)
         if command == 'o':
             self.sendLogger("Claw control", "open")
+            self.robot.openGripper()
         if command == 'c':
             self.sendLogger("Claw control", "close")
+            self.robot.closeGripper()
         if command == 'u':
             self.sendLogger("Arm control", "up")
+            self.robot.upGripper()
         if command == 'd':
             self.sendLogger("Arm control", "Down")
+            self.robot.downGripper()
+
+    def getSensors(self):
+        c = self.getColor(True)
+        self.color_sensor_txt.configure(fg_color=c)
+
+        d = self.robot.distanceSensor.distance()
+        self.distancebar_value.configure(text=f'{d:.2f}')
+        self.distancebar_value.after(1000, self.getSensors)
+
 
 
     def on_closing(self, event=0):

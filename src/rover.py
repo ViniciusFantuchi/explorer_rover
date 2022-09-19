@@ -1,5 +1,6 @@
 from gpiozero import Robot, DistanceSensor, Servo, LED
 from time import sleep
+from color import colorSensor
 
 class Explorer:
 
@@ -10,10 +11,13 @@ class Explorer:
     move_power = 0.6
     turn_power = 1
     
-    def __init__(self, color):
-        self.color = color
+    def __init__(self):
+        
+        self.color = colorSensor()
         self.robot = Robot(left=(7,8), right=(9,10))
         self.distanceSensor = DistanceSensor(23, 24)
+
+
 
         self.servo1 = Servo(19,
                             min_pulse_width=explorer.minPW,
@@ -29,8 +33,6 @@ class Explorer:
         self.ledG = LED(17)
         self.ledB = LED(27)
 
-    
-
 
     def servoInitialposition(self):
         self.servo1.max()
@@ -39,7 +41,6 @@ class Explorer:
         self.servo1.detach()
         self.servo2.detach()
 
-    
 
     def moveForward(self, power: float, t: float):
         print("forward", t)
@@ -87,8 +88,3 @@ class Explorer:
         sleep(0.2)
         self.servo2.detach()
 
-
-
-
-        
-        

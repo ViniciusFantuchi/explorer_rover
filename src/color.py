@@ -23,7 +23,7 @@ class colorSensor:
         print("\n")
         print("Start")
     
-    def getColor(self, printValues=None):
+    def getColor(self, printValues=False):
         
         GPIO.output(self.s2,GPIO.LOW)
         GPIO.output(self.s3,GPIO.LOW)
