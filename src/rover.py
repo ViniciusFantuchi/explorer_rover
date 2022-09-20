@@ -2,7 +2,7 @@ from gpiozero import Robot, DistanceSensor, Servo, LED
 from time import sleep
 from color import colorSensor
 
-class Explorer:
+class Explorer(colorSensor):
 
     myCorrection = 0.45
     maxPW = (2.0+myCorrection)/1000
@@ -13,7 +13,6 @@ class Explorer:
     
     def __init__(self):
         
-        self.color = colorSensor()
         self.robot = Robot(left=(7,8), right=(9,10))
         self.distanceSensor = DistanceSensor(23, 24)
 

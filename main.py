@@ -1,6 +1,5 @@
 from src.rover import Explorer
 import tkinter
-import tkinter.messagebox
 import customtkinter
 from PIL import Image, ImageTk
 import os
@@ -17,7 +16,6 @@ class App(customtkinter.CTk):
     HEIGHT = 720
 
     mission_progress = 0
-    
     
 
     def __init__(self, robot):
