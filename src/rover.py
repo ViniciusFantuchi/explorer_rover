@@ -1,6 +1,6 @@
 from gpiozero import Robot, DistanceSensor, Servo, LED
 from time import sleep
-from color import colorSensor
+
 
 class Explorer(colorSensor):
 
