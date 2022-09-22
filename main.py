@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-#from src.rover import *
+from src.rover import Explorer
+from src.color import ColorSensor
 
 from distutils.cmd import Command
 import tkinter
@@ -11,7 +12,7 @@ from time import sleep
 
 PATH = os.path.dirname(os.path.realpath(__file__))
 
-customtkinter.set_appearance_mode("System")  # Modes: "System" (standard), "Dark", "Light"
+customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 class Splash(customtkinter.CTk):
@@ -21,7 +22,7 @@ class Splash(customtkinter.CTk):
 
         # Set window
         #self.title("Explorer Rover - Mission Control")
-        self.geometry('500x300+500+200')
+        self.geometry('500x300+400+200')
         self.overrideredirect(True)
 
         logo1 = Image.open(PATH + "/images/logoKSCIA.png").resize((100,100))
@@ -56,7 +57,7 @@ class Splash(customtkinter.CTk):
         if self.count <= 1:
             self.progress.after(50, self.start)
         else:
-            self.progress.after(500, self.destroy())
+            self.progress.after(100, self.destroy())
 
 
 class App(customtkinter.CTk):
@@ -68,11 +69,11 @@ class App(customtkinter.CTk):
     mission_progress = 0
     
 
-    def __init__(self):
+    def __init__(self, robot, color):
         super().__init__()
         
-        #self.robot = robot
-
+        self.robot = robot
+        self.color = color
 
 
         # Define control variables
@@ -355,9 +356,9 @@ class App(customtkinter.CTk):
         self.canva = customtkinter.CTkCanvas(self.frame_send,
                                                 height=120)
         self.canva.create_text(30, 20, 
-                                text="Number\t|        last command\t|        value", 
+                                text="Number\t|    last command\t|     value", 
                                 anchor="w")
-        self.canva.create_line(10, 34, 330, 34)
+        self.canva.create_line(10, 34, 310, 34)
         self.command_logger = self.canva.create_text(30, 40, text="", anchor="nw")
         self.canva.grid(row=1, column=0, padx=16, pady=(0,16), sticky="nwe")
         
@@ -501,21 +502,21 @@ class App(customtkinter.CTk):
         self.status1_txt.grid(row=0, column=0, padx=10, sticky="w")
 
         self.status1_txt = customtkinter.CTkLabel(self.container, 
-                                                text="OPEN",
+                                                text="CLOSE",
                                                 width=50,
                                                 text_font=("Roboto medium", -16),
                                                 anchor="e")
         self.status1_txt.grid(row=0, column=2, padx=8, pady=10, sticky="e")
 
         self.claw_switch = customtkinter.CTkSwitch(master=self.container, 
-                                                    text="  CLOSE",
+                                                    text="  OPEN",
                                                     text_font=("Roboto medium", -16),
                                                     command= lambda : self.switchStatus(self.claw_switch, "claw"))
         self.claw_switch.grid(row=0, column=3, padx=8, pady=10, sticky="w")
 
         
         self.status1_txt = customtkinter.CTkLabel(self.container, 
-                                                text="UP",
+                                                text="DOWN",
                                                 width=50,
                                                 text_font=("Roboto medium", -16),
                                                 anchor="e")
@@ -523,11 +524,12 @@ class App(customtkinter.CTk):
 
 
         self.arm_switch = customtkinter.CTkSwitch(master=self.container, 
-                                                    text="  DOWN",
+                                                    text="  UP",
                                                     text_font=("Roboto medium", -16),
                                                     command= lambda : self.switchStatus(self.arm_switch, "arm"))
         self.arm_switch.grid(row=0, column=6, padx=8, pady=10, sticky="w")
 
+        
         
 
     #============== METODS ================#
@@ -556,7 +558,7 @@ class App(customtkinter.CTk):
 
     def sendLogger(self, command, value):
         self.cont.set(self.cont.get() + 1)
-        txt_format = f'    {self.cont.get()}\t|            {command}\t|         {value}\n{self.content.get()}'
+        txt_format = f'    {self.cont.get()}\t|        {command}\t|       {value}\n{self.content.get()}'
         self.content.set(txt_format)
         self.canva.itemconfig(self.command_logger, text=self.content.get())
         
@@ -565,44 +567,57 @@ class App(customtkinter.CTk):
             if command == 'f':
                 f = self.forward_value.get()
                 self.sendLogger("Forward", f'{f:.2f}')
-                #self.robot.moveForward(self.powerForward, f)
+                self.robot.moveForward(self.powerForward, f)
             if command == 'b':
                 b = self.backward_value.get()
                 self.sendLogger("Backward", f'{b:.2f}')
-                #self.robot.backward(self.powerForward, b)
+                self.robot.moveBackward(self.powerForward, b)
             if command == 'l':
                 l = self.left_value.get()
                 self.sendLogger("Turn Left", f'{l:.2f}')
-                #self.robot.left(self.powerTurn, l)
+                self.robot.turnLeft(self.powerTurn, l)
             if command == 'r':
                 r = self.right_value.get()
                 self.sendLogger("Turn Right", f'{r:.2f}')
-                #self.robot.right(self.powerTurn, r)
+                self.robot.turnRight(self.powerTurn, r)
             if command == 'o':
                 self.sendLogger("Claw control", "open")
-                #self.robot.openGripper()
+                self.robot.openGripper()
             if command == 'c':
                 self.sendLogger("Claw control", "close")
-                #self.robot.closeGripper()
+                self.robot.closeGripper()
             if command == 'u':
                 self.sendLogger("Arm control", "up")
-                #self.robot.upGripper()
+                self.robot.upGripper()
             if command == 'd':
                 self.sendLogger("Arm control", "Down")
-                #self.robot.downGripper()
+                self.robot.downGripper()
 
     def getSensors(self):
-        print("sensor")
-        #c = self.robot.getColor(True)
-        #self.color_sensor_txt.configure(fg_color=c)
-
+        
+        c = self.color.getColor(False)
+        print(c)
+        self.color_sensor_label.configure(fg_color=c)
+        
+        if c == "Red":
+            self.robot.setLed(1,0,0)
+        elif c == "Green":
+            self.robot.setLed(0,1,0)
+        elif c == "Blue":
+            self.robot.setLed(0,0,1)
+        elif c == "White":
+            self.robot.setLed(1,1,1)
+        else:
+            self.robot.setLed(0,0,0)
+        
+        
         d = round(self.robot.distanceSensor.distance, 2)
         print(d)
         self.distancebar_value.configure(text=f'{d*100} cm')
         self.distancebar.set(d)
         self.distancebar_value.after(1000, self.getSensors)
 
-    minutes = 6
+    minutes = 4
     seconds = 60
 
 
@@ -617,11 +632,11 @@ class App(customtkinter.CTk):
             self.timerTxt.after(100, self.stopwatch)
             if App.minutes == 3 and App.seconds == 0:
                 self.timerTxt.configure(bg_color="red")
-                messagebox.showwarning(title="Attencion", message="3 minutes left")
+                messagebox.showwarning(title="Attencion", message="\n3 minutes left\n")
         else:
             self.status = False
             self.canva.itemconfig(self.command_logger, text=f'\tMISSION ACCOMPLISHED \n{self.content.get()}')
-            messagebox.showwarning('warning',"Your time is over\nMISSION ACCOMPLISHED")
+            messagebox.showwarning('warning',"\nYour time is over\t\nMISSION ACCOMPLISHED\n")
             print("time is over")
 
         
@@ -629,11 +644,13 @@ class App(customtkinter.CTk):
     def on_closing(self, event=0):
         self.destroy()
 
-#rover = Explorer()
+colorSensor = ColorSensor()
+rover = Explorer()
         
 if __name__ == "__main__":
     splash = Splash()
     splash.start()
     splash.mainloop()
-    app = App()
+    app = App(rover, colorSensor)
+    app.getSensors()
     app.mainloop()

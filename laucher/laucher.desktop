@@ -1,0 +1,9 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Name=Mission Control
+Path=/home/pi/explorer_rover/
+Exec='/home/pi/explorer_rover/main.py'
+Icon=/home/pi/explorer_rover/images/logoKSCIA.png
+Type=Application
+Terminal=false

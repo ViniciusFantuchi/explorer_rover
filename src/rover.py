@@ -1,8 +1,8 @@
+
 from gpiozero import Robot, DistanceSensor, Servo, LED
 from time import sleep
 
-
-class Explorer(colorSensor):
+class Explorer():
 
     myCorrection = 0.45
     maxPW = (2.0+myCorrection)/1000
@@ -19,12 +19,12 @@ class Explorer(colorSensor):
 
 
         self.servo1 = Servo(19,
-                            min_pulse_width=explorer.minPW,
-                            max_pulse_width=explorer.maxPW)
+                            min_pulse_width=Explorer.minPW,
+                            max_pulse_width=Explorer.maxPW)
 
         self.servo2 = Servo(26,
-                            min_pulse_width=explorer.minPW,
-                            max_pulse_width=explorer.maxPW)
+                            min_pulse_width=Explorer.minPW,
+                            max_pulse_width=Explorer.maxPW)
 
         self.servoInitialposition()
         
@@ -49,9 +49,9 @@ class Explorer(colorSensor):
 
     def moveBackward(self, power: float, t: float):
         print("backward", t)
-        explorer.backward(v)
-        sleep(float(textboxB.value))
-        explorer.stop()
+        self.robot.backward(power)
+        sleep(float(t))
+        self.robot.stop()
         
     def turnLeft(self, power: float, t: float):
         print("Turn Left", t)
@@ -61,7 +61,7 @@ class Explorer(colorSensor):
         
     def turnRight(self, power: float, t: float):
         print("Turn Right", t)
-        explorer.right(power)
+        self.robot.right(power)
         sleep(float(t))
         self.robot.stop()
     
@@ -86,4 +86,9 @@ class Explorer(colorSensor):
         self.servo2.max()
         sleep(0.2)
         self.servo2.detach()
+
+    def setLed(self, r, g, b):
+        self.ledR.on() if r else self.ledR.off()
+        self.ledG.on() if g else self.ledG.off()
+        self.ledB.on() if b else self.ledB.off() 
 
