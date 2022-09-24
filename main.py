@@ -87,7 +87,7 @@ class App(customtkinter.CTk):
         self.left_value = tkinter.DoubleVar()
         self.right_value = tkinter.DoubleVar()
 
-        self.powerForward = 0.6
+        self.powerForward = 0.5
         self.powerTurn = 1
 
         self.pd_min = 0
@@ -461,7 +461,7 @@ class App(customtkinter.CTk):
 
         # Right control
         self.right_txt = customtkinter.CTkLabel(self.frame_control, 
-                                                text="TURN LEFT",
+                                                text="TURN RIGHT",
                                                 width=100,
                                                 text_font=("Roboto medium", -16),
                                                 anchor="w")
